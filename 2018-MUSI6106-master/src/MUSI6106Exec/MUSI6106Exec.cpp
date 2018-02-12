@@ -25,45 +25,68 @@ int main(int argc, char* argv[])
     clock_t                 time = 0;
 
     float                   **ppfAudioData = 0;
+	float                   **ppfOutputData = 0;
 
     CAudioFileIf            *phAudioFile = 0;
     std::fstream            hOutputFile;
     CAudioFileIf::FileSpec_t stFileSpec;
-
+	CCombFilterIf::CombFilterType_t filterTypeEnum;
     CCombFilterIf   *pInstance = 0;
     CCombFilterIf::create(pInstance);
+	float gain = 0, delay = 0;
+	int filterType=0; ///say the default filter type is FIR
     showClInfo();
 
     //////////////////////////////////////////////////////////////////////////////
     // parse command line arguments
+	std::cout << "Enter input audiopath, output audio path, filter type, delay and gain parameters\n";
     if (argc < 2)
     {
         cout << "Missing audio input path!";
         return -1;
     }
-    else
+    else if(argc==6)
     {
         sInputFilePath = argv[1];
         sOutputFilePath = sInputFilePath + ".txt";
-    }
+		filterType = atoi(argv[3]);	
+		delay = atof(argv[4]);
+		gain = atof(argv[5]);
 
+    }
+	else if (argc == 5) {
+		sInputFilePath = argv[1];
+		sOutputFilePath = sInputFilePath + ".txt";
+		filterType = atoi(argv[3]);
+		delay = atof(argv[4]);
+	}
+	else if (argc == 4) {
+		sInputFilePath = argv[1];
+		sOutputFilePath = sInputFilePath + ".txt";
+		filterType = atoi(argv[3]);
+	}
+	else{
+		sInputFilePath = argv[1];
+		sOutputFilePath = sInputFilePath + ".txt";
+		
+	}
     //////////////////////////////////////////////////////////////////////////////
     // open the input wave file
     CAudioFileIf::create(phAudioFile);
     phAudioFile->openFile(sInputFilePath, CAudioFileIf::kFileRead);
     if (!phAudioFile->isOpen())
     {
-        cout << "Wave file open error!";
+        cout << "File open error!";
         return -1;
     }
     phAudioFile->getFileSpec(stFileSpec);
 
     //////////////////////////////////////////////////////////////////////////////
-    // open the output text file
+    // open the output wav file
     hOutputFile.open(sOutputFilePath.c_str(), std::ios::out);
     if (!hOutputFile.is_open())
     {
-        cout << "Text file open error!";
+        cout << "Wav file open error!";
         return -1;
     }
 
@@ -72,22 +95,33 @@ int main(int argc, char* argv[])
     ppfAudioData = new float*[stFileSpec.iNumChannels];
     for (int i = 0; i < stFileSpec.iNumChannels; i++)
         ppfAudioData[i] = new float[kBlockSize];
+	ppfOutputData = new float*[stFileSpec.iNumChannels];
+	for (int i = 0; i < stFileSpec.iNumChannels; i++)
+		ppfOutputData[i] = new float[kBlockSize];
 
     time = clock();
     //////////////////////////////////////////////////////////////////////////////
     // get audio data and write it to the output file
-    while (!phAudioFile->isEof())
+	//pInstance->init(filterType,)
+	switch (filterType)
+	{
+	case 0:filterTypeEnum = CCombFilterIf::kCombFIR; break;
+	case 1:filterTypeEnum = CCombFilterIf::kCombIIR; break;
+	}
+	//filterTypeEnum = (CCombFilterIf::FilterParam_t)filterType;
+	pInstance->init(filterTypeEnum, delay, stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels);
+	while (!phAudioFile->isEof())
     {
         long long iNumFrames = kBlockSize;
         phAudioFile->readData(ppfAudioData, iNumFrames);
-
+		pInstance->process(ppfAudioData, ppfOutputData, iNumFrames);
         cout << "\r" << "reading and writing";
 
         for (int i = 0; i < iNumFrames; i++)
         {
             for (int c = 0; c < stFileSpec.iNumChannels; c++)
             {
-                hOutputFile << ppfAudioData[c][i] << "\t";
+                hOutputFile << ppfOutputData[c][i] << "\t";
             }
             hOutputFile << endl;
         }
@@ -98,13 +132,17 @@ int main(int argc, char* argv[])
     //////////////////////////////////////////////////////////////////////////////
     // clean-up
     CAudioFileIf::destroy(phAudioFile);
+	CCombFilterIf::destroy(pInstance);
     hOutputFile.close();
 
     for (int i = 0; i < stFileSpec.iNumChannels; i++)
         delete[] ppfAudioData[i];
     delete[] ppfAudioData;
     ppfAudioData = 0;
-
+	for (int i = 0; i < stFileSpec.iNumChannels; i++)
+		delete[] ppfOutputData[i];
+	delete[] ppfOutputData;
+	ppfOutputData = 0;
     return 0;
 
 }

@@ -6,6 +6,7 @@
 
 #include "AudioFileIf.h"
 #include "CombFilterIf.h"
+#include "Util.h"
 
 using std::cout;
 using std::endl;
@@ -110,6 +111,8 @@ int main(int argc, char* argv[])
 	}
 	//filterTypeEnum = (CCombFilterIf::FilterParam_t)filterType;
 	pInstance->init(filterTypeEnum, delay, stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels);
+	pInstance->setParam(CCombFilterIf::kParamGain, gain);
+	pInstance->setParam(CCombFilterIf::kParamDelay, delay);
 	while (!phAudioFile->isEof())
     {
         long long iNumFrames = kBlockSize;

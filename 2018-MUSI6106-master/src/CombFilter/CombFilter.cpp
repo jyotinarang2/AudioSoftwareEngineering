@@ -1,6 +1,7 @@
 
 // standard headers
 #include <limits>
+#include <iostream>
 
 // project headers
 #include "MUSI6106Config.h"
@@ -110,10 +111,12 @@ bool CCombFilterBase::isInParamRange( CCombFilterIf::FilterParam_t eParam, float
 
 //Implementation as per the code given in the question
 Error_t CCombFilterFir::process( float **ppfInputBuffer, float **ppfOutputBuffer, int iNumberOfFrames )
-{
+{   
 	for (int i = 0; i < m_iNumChannels; i++) {
-		for (int j = 0; i < iNumberOfFrames; j++) {
+		for (int j = 0; j < iNumberOfFrames; j++) {
+			//std::cout << ppfInputBuffer[i][j]<<"\n";
 			m_ppCRingBuffer[i]->putPostInc(ppfInputBuffer[i][j]);
+			//std::cout << "Ring buffer contents" << m_ppCRingBuffer[i]->get();
 			ppfOutputBuffer[i][j] = ppfInputBuffer[i][j] + m_afParam[CCombFilterIf::kParamGain]*m_ppCRingBuffer[i]->getPostInc();
 			
 		}
@@ -124,15 +127,15 @@ Error_t CCombFilterFir::process( float **ppfInputBuffer, float **ppfOutputBuffer
 
 CCombFilterIir::CCombFilterIir (int iMaxDelayInFrames, int iNumChannels) : CCombFilterBase(iMaxDelayInFrames, iNumChannels)
 {
-	m_aafParamRange[CCombFilterIf::kParamGain][0] = -1; //initialize the minimum value of gain parameter to -1
-	m_aafParamRange[CCombFilterIf::kParamGain][1] = 1; //Initialize the maximum value of gain parameter to +1
+	m_aafParamRange[CCombFilterIf::kParamGain][0] = -1.F; //initialize the minimum value of gain parameter to -1
+	m_aafParamRange[CCombFilterIf::kParamGain][1] = 1.F; //Initialize the maximum value of gain parameter to +1
 
 }
 
 Error_t CCombFilterIir::process( float **ppfInputBuffer, float **ppfOutputBuffer, int iNumberOfFrames )
 {
 	for (int i = 0; i < m_iNumChannels; i++) {
-		for (int j = 0; i < iNumberOfFrames; j++) {
+		for (int j = 0; j < iNumberOfFrames; j++) {
 			ppfOutputBuffer[i][j] = ppfInputBuffer[i][j] + m_afParam[CCombFilterIf::kParamGain] * m_ppCRingBuffer[i]->getPostInc();
 			m_ppCRingBuffer[i]->putPostInc(ppfOutputBuffer[i][j]);
 		}

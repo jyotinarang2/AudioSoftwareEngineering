@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
 
     float                   **ppfAudioData = 0;
 	float                   **ppfOutputData = 0;
+	float **testUnit=0;
 
     CAudioFileIf            *phAudioFile = 0;
     std::fstream            hOutputFile;
@@ -101,7 +102,18 @@ int main(int argc, char* argv[])
 		ppfOutputData[i] = new float[kBlockSize];
 
     time = clock();
-    //////////////////////////////////////////////////////////////////////////////
+	testUnit = new float*[1];
+	for (int k = 0; k < 1; k++) {
+		testUnit[k] = new float[kBlockSize];
+	}
+	for (int i = 0; i < 1; i++) {
+		for (int j = 0; j < kBlockSize; j++) {
+			testUnit[i][j] = 0;
+		}
+		
+	}
+	testUnit[0][0] = 1;
+	//////////////////////////////////////////////////////////////////////////////
     // get audio data and write it to the output file
 	//pInstance->init(filterType,)
 	switch (filterType)
@@ -110,10 +122,14 @@ int main(int argc, char* argv[])
 	case 1:filterTypeEnum = CCombFilterIf::kCombIIR; break;
 	}
 	//filterTypeEnum = (CCombFilterIf::FilterParam_t)filterType;
-	pInstance->init(filterTypeEnum, delay, stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels);
-	pInstance->setParam(CCombFilterIf::kParamGain, gain);
-	pInstance->setParam(CCombFilterIf::kParamDelay, delay);
-	while (!phAudioFile->isEof())
+	//pInstance->init(filterTypeEnum, delay, stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels);
+	//pInstance->setParam(CCombFilterIf::kParamGain, gain);
+	//pInstance->setParam(CCombFilterIf::kParamDelay, delay);
+	pInstance->init(CCombFilterIf::kCombFIR, 2, 5, 1);
+	pInstance->setParam(CCombFilterIf::kParamGain, 0.5);
+	pInstance->setParam(CCombFilterIf::kParamDelay, 2);
+
+	/*while (!phAudioFile->isEof())
     {
         long long iNumFrames = kBlockSize;
         phAudioFile->readData(ppfAudioData, iNumFrames);
@@ -128,8 +144,25 @@ int main(int argc, char* argv[])
             }
             hOutputFile << endl;
         }
-    }
+    }*/
+	int k = 0;
+	while (k<100)
+	{
+	long long iNumFrames = 100;
+	//phAudioFile->readData(ppfAudioData, iNumFrames);
+	pInstance->process(testUnit, ppfOutputData, iNumFrames);
+	cout << "\r" << "reading and writing";
 
+	for (int i = 0; i < iNumFrames; i++)
+	{
+	for (int c = 0; c < stFileSpec.iNumChannels; c++)
+	{
+	hOutputFile << ppfOutputData[c][i] << "\t";
+	}
+	hOutputFile << endl;
+	}
+	k++;
+	}
     cout << "\nreading/writing done in: \t" << (clock() - time)*1.F / CLOCKS_PER_SEC << " seconds." << endl;
 
     //////////////////////////////////////////////////////////////////////////////

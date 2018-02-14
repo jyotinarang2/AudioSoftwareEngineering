@@ -136,6 +136,7 @@ Error_t CCombFilterIir::process( float **ppfInputBuffer, float **ppfOutputBuffer
 {
 	for (int i = 0; i < m_iNumChannels; i++) {
 		for (int j = 0; j < iNumberOfFrames; j++) {
+			
 			ppfOutputBuffer[i][j] = ppfInputBuffer[i][j] + m_afParam[CCombFilterIf::kParamGain] * m_ppCRingBuffer[i]->getPostInc();
 			m_ppCRingBuffer[i]->putPostInc(ppfOutputBuffer[i][j]);
 		}

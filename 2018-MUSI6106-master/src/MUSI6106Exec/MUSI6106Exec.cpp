@@ -257,16 +257,9 @@ int main(int argc, char* argv[])
 			testStep[i][j] = 1;
 		}
 	}
-	//Say the first 50 sample values are 1
-	/*for (int i = 0; i < channels; i++) {
-		for (int j = 0; j < ; j++) {
-			testStep[i][j] = 1;
-		}
-	}*/
+
 	//Allocate memory for the sinusoidal input
-	/*int samplingRate = 100;
-	float interval = 1 / samplingRate, lenSignal = 0.05;
-	int samples = samplingRate * lenSignal;*/
+
 	testSinusoid = new float*[channels];
 	for (int k = 0; k < channels; k++) {
 		testSinusoid[k] = new float[5000];
@@ -316,7 +309,7 @@ int main(int argc, char* argv[])
 	//it results in mostly positive values with very small negative values. A threshold is set to check the negative values.
 	testSinusoidalInput(testSinusoid, testInstance, CCombFilterIf::kCombIIR, sinOutputData, 5000, channels);
 	
-	//Test case 3: 
+	//Test case 3:Test the functionality of FIR as well as IIR for increase in magnitude with the input signal.
 	testUnitStepSignal(testStep, testInstance, CCombFilterIf::kCombIIR, outputData, testBlockSize, channels);
 	cout << "\nreading/writing done in: \t" << (clock() - time)*1.F / CLOCKS_PER_SEC << " seconds." << endl;
 

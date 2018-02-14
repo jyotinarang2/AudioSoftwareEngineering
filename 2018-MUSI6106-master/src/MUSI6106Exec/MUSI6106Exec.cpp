@@ -260,7 +260,7 @@ int main(int argc, char* argv[])
         }
     }
    
-    //Allocate memory for the sinusoidal input
+    //Allocate memory for the sinusoidal input. A random signal
    
     testSinusoid = new float*[channels];
     for (int k = 0; k < channels; k++) {
@@ -298,6 +298,7 @@ int main(int argc, char* argv[])
         
      
     }
+	cout << "Running test cases now" << endl;
     //Test case 1. Take a unit impulse signal and test FIR/IIR results. This test works with both FIR as well as IIR type of filter
     testUnitImpulse(testUnit, testInstance, CCombFilterIf::kCombFIR, outputData, testBlockSize,channels);
     

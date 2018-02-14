@@ -43,7 +43,7 @@ CCombFilterBase::~CCombFilterBase()
 {   
 	
 	for (int i = 0; i < m_iNumChannels; i++)
-		delete[] m_ppCRingBuffer[i];
+		delete m_ppCRingBuffer[i];
 	delete[] m_ppCRingBuffer;
 	
 }

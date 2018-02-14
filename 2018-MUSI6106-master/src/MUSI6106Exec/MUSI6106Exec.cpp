@@ -288,7 +288,7 @@ int main(int argc, char* argv[])
 	case 1:filterTypeEnum = CCombFilterIf::kCombIIR; break;
 	}
 	/*Initialize and set filter parameters based on the given input*/
-	/*pInstance->init(filterTypeEnum, delay, stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels);
+	pInstance->init(filterTypeEnum, delay, stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels);
 	pInstance->setParam(CCombFilterIf::kParamGain, gain);
 	pInstance->setParam(CCombFilterIf::kParamDelay, delay);
 
@@ -308,7 +308,7 @@ int main(int argc, char* argv[])
             }
             hOutputFile << endl;
         }
-    }*/
+    }
 	//Test case 1. Take a unit impulse signal and test FIR/IIR results. This test works with both FIR as well as IIR type of filter
 	testUnitImpulse(testUnit, testInstance, CCombFilterIf::kCombFIR, outputData, testBlockSize,channels);
 
@@ -335,6 +335,21 @@ int main(int argc, char* argv[])
 		delete[] ppfOutputData[i];
 	delete[] ppfOutputData;
 	ppfOutputData = 0;
+	for (int i = 0; i < 1; i++)
+		delete[] outputData[i];
+	delete[] outputData;
+	for (int i = 0; i < 1; i++)
+		delete[] testUnit[i];
+	delete[] testUnit;
+	for (int i = 0; i < 1; i++)
+		delete[] testSinusoid[i];
+	delete[] testSinusoid;
+	for (int i = 0; i < 1; i++)
+		delete[] testStep[i];
+	delete[] testStep;
+	for (int i = 0; i < 1; i++)
+		delete[] sinOutputData[i];
+	delete[] sinOutputData;
     return 0;
 
 }

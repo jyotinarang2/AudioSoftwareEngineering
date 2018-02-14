@@ -48,7 +48,7 @@ void testUnitImpulse(float **testSignal, CCombFilterIf *filterInstance, CCombFil
                     }
                 }
                 
-                std::cout << outputData[c][i] << "\t";
+               // std::cout << outputData[c][i] << "\t";
             }
             
         }
@@ -131,7 +131,7 @@ void testUnitStepSignal(float **testSignal, CCombFilterIf *filterInstance, CComb
             if (outputData[c][i] < outputData[c][i-1]) {
                 throw "Exception:FIR comb effect not achieved";
             }
-            std::cout << outputData[c][i] << endl;
+            //std::cout << outputData[c][i] << endl;
         }
         
     }

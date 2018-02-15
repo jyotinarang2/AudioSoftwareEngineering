@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
     
     //////////////////////////////////////////////////////////////////////////////
     // parse command line arguments
-    std::cout << "Enter input audiopath, output audio path, filter type, delay and gain parameters\n";
+    std::cout << "Enter input audiopath, output audio path, filter type(0-FIR or 1-IIR), delay and gain parameters\n";
     if (argc < 2)
     {
         cout << "Missing audio input path!";
@@ -182,11 +182,20 @@ int main(int argc, char* argv[])
         sInputFilePath = argv[1];
         sOutputFilePath = argv[2];
         filterType = atoi(argv[3]);
+		cout << filterType;
+		if (filterType != 0  && filterType != 1) {
+			std::cout << "Invalid filter type input" << endl;
+			return -1;
+		}
         delay = atof(argv[4]);
+		if (delay == 0) {
+			std::cout << "The delay value cannot not be 0" << endl;
+			return -1;
+		}
         gain = atof(argv[5]);
-        if (gain < -1 || gain>1) {
+        if ((filterType==1) && (gain < -1 || gain>1)) {
             cout << "Invalid gain value";
-            throw "Exception:Invalid gain value";
+			return -1;
         }
     }
     

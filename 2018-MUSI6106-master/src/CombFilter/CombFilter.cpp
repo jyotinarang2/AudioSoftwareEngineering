@@ -27,8 +27,8 @@ CCombFilterBase::CCombFilterBase( int iMaxDelayInFrames, int iNumChannels ) :
 		m_afParam[i] = 0.F;
 	}
     //Initialize the range parameters as given in comments
-	m_aafParamRange[CCombFilterIf::kParamGain][0] = -1; //initialize the minimum value of gain parameter to -1
-	m_aafParamRange[CCombFilterIf::kParamGain][1] = 1; //Initialize the maximum value of gain parameter to +1
+	m_aafParamRange[CCombFilterIf::kParamGain][0] = std::numeric_limits<float>::min();
+	m_aafParamRange[CCombFilterIf::kParamGain][1] = std::numeric_limits<float>::max();
 	m_aafParamRange[CCombFilterIf::kParamDelay][0] = 0; //Initialize the minimum delay to 0 samples
 	m_aafParamRange[CCombFilterIf::kParamDelay][1] = static_cast<float>(iMaxDelayInFrames);  //Initialize the max delay to maxDelayInFrames
 
